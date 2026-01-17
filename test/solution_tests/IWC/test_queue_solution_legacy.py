@@ -82,3 +82,14 @@ def test_respects_timestamp_ordering(queue):
     queue.enqueue(bank_statements_task)
 
     assert queue.dequeue().user_id == 234
+
+
+def test_deduplication_logic(queue):
+    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=datetime1, metadata={ "priority": Priority.HIGH })
+    duplicate_credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=datetime2, metadata={ "priority": Priority.NORMAL })
+
+    queue.enqueue(credit_check_task)
+    queue.enqueue(duplicate_credit_check_task)
+
+    assert queue.size == 1
+    assert queue.dequeue().timestamp == datetime2
