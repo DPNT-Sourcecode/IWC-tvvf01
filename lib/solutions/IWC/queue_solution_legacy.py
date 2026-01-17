@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import IntEnum
+import threading
 
 # LEGACY CODE ASSET
 # RESOLVED on deploy
@@ -50,6 +51,7 @@ REGISTERED_PROVIDERS: list[Provider] = [
 class Queue:
     def __init__(self):
         self._queue = []
+        self.lock = threading.lock()
 
     def _collect_dependencies(self, task: TaskSubmission) -> list[TaskSubmission]:
         provider = next((p for p in REGISTERED_PROVIDERS if p.name == task.provider), None)
@@ -91,6 +93,8 @@ class Queue:
         return timestamp
 
     def enqueue(self, item: TaskSubmission) -> int:
+        with self
+
         tasks = [*self._collect_dependencies(item), item]
 
         for task in tasks:
@@ -242,3 +246,4 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
