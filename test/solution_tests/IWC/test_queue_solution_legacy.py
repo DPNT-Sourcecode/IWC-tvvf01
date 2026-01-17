@@ -22,13 +22,17 @@ def test_size_empty_queue(queue):
 
 
 def test_size_busy_queue(queue):
+    companies_house_task = TaskSubmission(provider=COMPANIES_HOUSE_PROVIDER.name, user_id=123, timestamp=datetime2)
     credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=datetime1)
     bank_statement_task = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=123, timestamp=datetime1)
-    queue.enqueue(credit_check_task)
+    queue.enqueue(companies_house_task)
+    assert queue.enqueue(credit_check_task) == 2
     queue.enqueue(bank_statement_task)
-    queue.dequeue()
 
-    assert queue.size == 2
+    assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
+    assert queue.dequeue().provider == CREDIT_CHECK_PROVIDER.name
+    assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
+    assert queue.size == 0
 
 
 def test_purge(queue):
@@ -95,4 +99,18 @@ def test_deduplication_logic(queue):
     # We expect a queue size of 3 instead of 2 because the credit check depends on Companies House
     assert queue.enqueue(duplicate_credit_check_task) == 2
     assert queue.dequeue().provider == CREDIT_CHECK_PROVIDER.name
+
+
+def test_deduplication_with_dependencies(queue):
+    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=datetime1, metadata={ "priority": Priority.NORMAL })
+    bank_statement_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=datetime2, metadata={ "priority": Priority.NORMAL })
+    duplicate_credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=datetime2, metadata={ "priority": Priority.NORMAL })
+
+    queue.enqueue(credit_check_task)
+    queue.enqueue(bank_statement_task)
+
+    # We expect a queue size of 3 instead of 2 because the credit check depends on Companies House
+    assert queue.enqueue(duplicate_credit_check_task) == 2
+    assert queue.dequeue().provider == CREDIT_CHECK_PROVIDER.name
+
 
