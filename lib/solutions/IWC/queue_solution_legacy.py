@@ -94,8 +94,8 @@ class Queue:
         for position, original_task in enumerate(self._queue):
             if (original_task.user_id == item.user_id and original_task.provider == item.provider):
                 if item.timestamp < original_task.timestamp:
+                    print('replacing')
                     self._queue[position] = item
-
                 return
 
         tasks = [*self._collect_dependencies(item), item]
@@ -249,4 +249,5 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
