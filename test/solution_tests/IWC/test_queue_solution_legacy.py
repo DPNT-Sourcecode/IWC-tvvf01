@@ -38,6 +38,14 @@ def test_purge(queue):
 
 def test_enqueue_respects_dependency_resolution(queue):
     credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=date(2026, 1, 15))
-    assert queue.enqueue(credit_check_task) == 2
 
+    assert queue.enqueue(credit_check_task) == 2
     assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
+
+
+def test_dequeue_respects_task_priority(queue):
+    credit_check_task_one = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=date(2026, 1, 15), metadata={ "priority": Priority.NORMAL })
+    credit_check_task_one = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=234, timestamp=date(2026, 1, 15), metadata={ "priority": Priority.NORMAL })
+
+
+def test_dequeue_respects_rule_of_three(queue):
