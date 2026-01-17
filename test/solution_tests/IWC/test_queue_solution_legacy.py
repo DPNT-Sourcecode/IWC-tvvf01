@@ -1,0 +1,1 @@
+from solutions.IWC.queue_solution_legacy import QueueSolutionEntrypoint
