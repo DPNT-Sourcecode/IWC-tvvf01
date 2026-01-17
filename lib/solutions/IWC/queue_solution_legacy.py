@@ -96,7 +96,7 @@ class Queue:
                 if item.timestamp < original_task.timestamp:
                     print('replacing')
                     self._queue[position] = item
-                return
+                return self.size
 
         tasks = [*self._collect_dependencies(item), item]
 
@@ -249,5 +249,6 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
