@@ -27,5 +27,16 @@ def test_size_busy_queue(queue):
     assert queue.size == 1
 
 
+def test_purge(queue):
+    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER, user_id=123, timestamp=date(2026, 1, 15))
+    bank_statement_task = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER, user_id=123, timestamp=date(2026, 1, 15))
+    purge_result = queue.purge()
+
+    assert purge_result == True
+    assert queue.size == 0
+
+
+# def 
+
 
 
