@@ -1,7 +1,11 @@
 import pytest
-from datetime import date
+from datetime import date, datetime
 from solutions.IWC.queue_solution_legacy import Queue, COMPANIES_HOUSE_PROVIDER, CREDIT_CHECK_PROVIDER, BANK_STATEMENTS_PROVIDER, ID_VERIFICATION_PROVIDER, Priority
 from solutions.IWC.task_types import TaskSubmission
+
+
+datetime1 = datetime(2026, 1, 17, 19, 30)
+datetime2 = datetime(2026, 1, 17, 18, 30)
 
 
 @pytest.fixture
@@ -37,7 +41,7 @@ def test_purge(queue):
 
 
 def test_enqueue_respects_dependency_resolution(queue):
-    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=date(2026, 1, 15).isoformat())
+    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=datetime.now())
 
     assert queue.enqueue(credit_check_task) == 2
     assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
@@ -68,4 +72,5 @@ def test_dequeue_respects_rule_of_three(queue):
     assert queue.dequeue().user_id == 123
     assert queue.dequeue().user_id == 123
     assert queue.dequeue().user_id == 234
+
 
