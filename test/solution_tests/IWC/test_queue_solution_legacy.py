@@ -65,16 +65,14 @@ def test_dequeue_respects_rule_of_three(queue):
     queue.enqueue(credit_check_task_one)
     queue.enqueue(credit_check_task_two)
     queue.enqueue(bank_statements_task_one)
-    queue.enqueue(credit_check_task_two)
+    queue.enqueue(id_verification_task_one)
 
     assert queue.dequeue().user_id == 123
     assert queue.dequeue().user_id == 123
     assert queue.dequeue().user_id == 123
-    # assert queue.dequeue().user_id == 123
-    # assert queue.dequeue().user_id == 234
+    assert queue.dequeue().user_id == 123
+    assert queue.dequeue().user_id == 234
 
 
 def test_respects_timestamp_ordering(queue):
     ...
-
-
