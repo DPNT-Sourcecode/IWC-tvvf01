@@ -52,9 +52,7 @@ class Queue:
         self._queue = []
 
     def _collect_dependencies(self, task: TaskSubmission) -> list[TaskSubmission]:
-        print('yo')
         provider = next((p for p in REGISTERED_PROVIDERS if p.name == task.provider), None)
-        print(provider)
         if provider is None:
             return []
 

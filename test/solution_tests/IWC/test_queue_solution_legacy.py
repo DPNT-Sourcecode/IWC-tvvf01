@@ -18,18 +18,18 @@ def test_size_empty_queue(queue):
 
 
 def test_size_busy_queue(queue):
-    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER, user_id=123, timestamp=date(2026, 1, 15))
-    bank_statement_task = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER, user_id=123, timestamp=date(2026, 1, 15))
+    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=date(2026, 1, 15))
+    bank_statement_task = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=123, timestamp=date(2026, 1, 15))
     queue.enqueue(credit_check_task)
     queue.enqueue(bank_statement_task)
     queue.dequeue()
 
-    assert queue.size == 1
+    assert queue.size == 2
 
 
 def test_purge(queue):
-    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER, user_id=123, timestamp=date(2026, 1, 15))
-    bank_statement_task = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER, user_id=123, timestamp=date(2026, 1, 15))
+    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=date(2026, 1, 15))
+    bank_statement_task = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=123, timestamp=date(2026, 1, 15))
     purge_result = queue.purge()
 
     assert purge_result == True
@@ -37,7 +37,7 @@ def test_purge(queue):
 
 
 def test_enqueue_respects_dependency_resolution(queue):
-    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER, user_id=123, timestamp=date(2026, 1, 15))
+    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=date(2026, 1, 15))
     assert queue.enqueue(credit_check_task) == 2
 
-    # assert queue.dequeue().provider.name == COMPANIES_HOUSE_PROVIDER.name
+    assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
