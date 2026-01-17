@@ -92,6 +92,7 @@ class Queue:
 
     def enqueue(self, item: TaskSubmission) -> int:
         tasks = [*self._collect_dependencies(item), item]
+        print(tasks)
 
         for task in tasks:
             metadata = task.metadata

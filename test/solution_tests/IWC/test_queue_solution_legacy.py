@@ -41,6 +41,3 @@ def test_enqueue_respects_dependency_resolution(queue):
     assert queue.enqueue(credit_check_task) == 2
 
     # assert queue.dequeue().provider.name == COMPANIES_HOUSE_PROVIDER.name
-
-
-
