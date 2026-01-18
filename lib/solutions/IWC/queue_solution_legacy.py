@@ -53,6 +53,9 @@ class Queue:
         self._queue: Dict[Tuple[str, str], TaskSubmission] = {}
         self._deprioritised_providers: List[str] = [BANK_STATEMENTS_PROVIDER.name]
 
+        self._oldest_task_timestamp: datetime | None = None
+        self._newest_task_timestamp: datetime | None = None
+
     def _collect_dependencies(self, task: TaskSubmission) -> list[TaskSubmission]:
         provider = next((p for p in REGISTERED_PROVIDERS if p.name == task.provider), None)
         if provider is None:
@@ -185,7 +188,9 @@ class Queue:
 
     @property
     def age(self):
-        return 0
+        if self.size == 0:
+            return 0
+
 
     def purge(self):
         self._queue = {}
@@ -274,6 +279,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
