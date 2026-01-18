@@ -129,6 +129,7 @@ class Queue:
             metadata = task.metadata
             current_earliest = metadata.get("group_earliest_timestamp", MAX_TIMESTAMP)
             raw_priority = metadata.get("priority")
+            print(raw_priority, task.provider)
             try:
                 priority_level = Priority(raw_priority)
             except (TypeError, ValueError):
@@ -255,5 +256,3 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
-
-
