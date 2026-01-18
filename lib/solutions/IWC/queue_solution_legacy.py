@@ -84,10 +84,10 @@ class Queue:
         return metadata.get("group_earliest_timestamp", MAX_TIMESTAMP)
     
     @staticmethod
-    def _simplicity_weighting_for_task_for_task(task):
+    def _complexity_weighting_for_task(task):
         metadata = task.metadata
         print(f"{metadata=}")
-        return metadata.get("simplicity_weighting", 1)
+        return metadata.get("complexity_weighting", 1)
 
     @staticmethod
     def _timestamp_for_task(task):
@@ -113,7 +113,7 @@ class Queue:
             metadata = task.metadata
             metadata.setdefault("priority", Priority.NORMAL)
             metadata.setdefault("group_earliest_timestamp", MAX_TIMESTAMP)
-            metadata.setdefault("simplicity_weighting", 1)
+            metadata.setdefault("complexity_weighting", 1)
             self._queue[task_key] = task
         return self.size
 
@@ -154,14 +154,13 @@ class Queue:
                 metadata["group_earliest_timestamp"] = current_earliest
                 metadata["priority"] = priority_level
 
-            print(f"{task.provider=}, {self._deprioritised_providers}")
             if task.provider in self._deprioritised_providers:
-                metadata["task_simplicity_weighting"] = -1
+                metadata["complexity_weighting"] = 2
 
         queued_tasks.sort(
             key=lambda i: (
                 self._priority_for_task(i),
-                self._simplicity_weighting_for_task_for_task(i),
+                self._complexity_weighting_for_task(i),
                 self._earliest_group_timestamp_for_task(i),
                 self._timestamp_for_task(i),
             )
@@ -271,6 +270,3 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
-
-
-
