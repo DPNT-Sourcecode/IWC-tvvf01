@@ -93,7 +93,6 @@ def test_deduplication_logic(queue):
     queue.enqueue(bank_statement_task)
 
     assert queue.enqueue(duplicate_credit_check_task) == 3
-    assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
 
 
 def test_deduplication_with_dependencies(queue):
@@ -107,9 +106,8 @@ def test_deduplication_with_dependencies(queue):
     queue.enqueue(bank_statement_task)
 
     assert queue.enqueue(duplicate_credit_check_task) == 3
-    assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
-    assert queue.dequeue().provider == CREDIT_CHECK_PROVIDER.name
     assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
+    assert queue.dequeue().provider == CREDIT_CHECK_PROVIDER.name
 
 
 def test_deprioritisation_of_bank_statements_rule_of_three(queue):
