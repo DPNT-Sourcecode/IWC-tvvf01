@@ -92,11 +92,12 @@ class Queue:
         return timestamp
 
     def enqueue(self, item: TaskSubmission) -> int:
-        task_key = (task.user_id, task.provider)
         tasks = [*self._collect_dependencies(item), item]
 
         for task in tasks:
-            existing_match = self._queue[task_key]
+            task_key = (task.user_id, task.provider)
+
+            existing_match = self._queue.get(task_key, None)
 
             if existing_match:
                 if existing_match.timestamp < task.timestamp:
@@ -253,6 +254,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 

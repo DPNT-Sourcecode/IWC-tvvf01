@@ -98,7 +98,7 @@ def test_deduplication_logic(queue):
 
     # We expect a queue size of 3 instead of 2 because the credit check depends on Companies House
     assert queue.enqueue(duplicate_credit_check_task) == 2
-    assert queue.dequeue().provider == CREDIT_CHECK_PROVIDER.name
+    assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
 
 
 def test_deduplication_with_dependencies(queue):
@@ -112,3 +112,4 @@ def test_deduplication_with_dependencies(queue):
     # We expect a queue size of 3 instead of 2 because the credit check depends on Companies House
     assert queue.enqueue(duplicate_credit_check_task) == 2
     assert queue.dequeue().provider == CREDIT_CHECK_PROVIDER.name
+
