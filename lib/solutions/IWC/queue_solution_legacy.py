@@ -79,6 +79,7 @@ class Queue:
 
     def _should_reprioritise_deprioritised_task(self, task: TaskSubmission) -> bool:
         task_internal_age = int((self._newest_task_timestamp - self._timestamp_for_task(task)).total_seconds())
+        print(f"{task.provider=} {task_internal_age=}")
         is_task_internal_age_above_limit = task_internal_age >= 300
 
         return self._should_deprioritise_task(task) and is_task_internal_age_above_limit
@@ -185,6 +186,7 @@ class Queue:
 
         for i in queued_tasks:
             print(f"{i=}")
+            print(f"{self._should_reprioritise_deprioritised_task(task)=}")
         queued_tasks.sort(
             key=lambda i: (
                 self._priority_for_task(i),
@@ -311,5 +313,6 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
