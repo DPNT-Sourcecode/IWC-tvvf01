@@ -116,6 +116,16 @@ def test_deduplication_with_dependencies(queue):
     assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
 
 
-@pytest.mark.skipif(True, reason="not implemented yet")
 def test_deprioritisation_of_bank_statements(queue):
-    print('h')
+    bank_statements_task = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=123, timestamp=datetime2, metadata={ "priority": Priority.HIGH })
+    credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=datetime1, metadata={ "priority": Priority.NORMAL })
+    id_verification_task = TaskSubmission(provider=ID_VERIFICATION_PROVIDER.name, user_id=123, timestamp=datetime1, metadata={ "priority": Priority.NORMAL })
+
+    queue.enqueue(bank_statements_task)
+    queue.enqueue(credit_check_task)
+    queue.enqueue(id_verification_task)
+
+    assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
+    assert queue.dequeue().provider == CREDIT_CHECK_PROVIDER.name
+    assert queue.dequeue().provider == ID_VERIFICATION_PROVIDER.name
+    assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
