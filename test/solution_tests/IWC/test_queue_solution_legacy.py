@@ -162,8 +162,8 @@ def test_reprioritise_bank_statement_when_internal_age_five_mins_or_more(queue):
     queue.enqueue(bank_statements_task)
     queue.enqueue(companies_house_task)
 
-    assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
     assert queue.dequeue().provider == ID_VERIFICATION_PROVIDER.name
+    assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
 
 
 def test_reprioritise_bank_statement_when_internal_age_five_mins_or_more_multiuser(queue):
@@ -181,4 +181,5 @@ def test_reprioritise_bank_statement_when_internal_age_five_mins_or_more_multius
     assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
     assert queue.dequeue().provider == ID_VERIFICATION_PROVIDER.name
     assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
+
 

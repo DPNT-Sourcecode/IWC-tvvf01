@@ -168,7 +168,7 @@ class Queue:
 
             if priority_level is None or priority_level == Priority.NORMAL:
                 metadata["group_earliest_timestamp"] = MAX_TIMESTAMP                
-                if task_count[task.user_id] >= 3 or self._should_reprioritise_deprioritised_task(task):
+                if task_count[task.user_id] >= 3:
                     metadata["group_earliest_timestamp"] = priority_timestamps[task.user_id]
                     metadata["priority"] = Priority.HIGH
                 else:
@@ -309,3 +309,4 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
