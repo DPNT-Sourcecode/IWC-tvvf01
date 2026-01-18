@@ -51,6 +51,7 @@ REGISTERED_PROVIDERS: list[Provider] = [
 class Queue:
     def __init__(self):
         self._queue: Dict[Tuple[str, str], TaskSubmission] = {}
+        self._deprioritised_providers: List[str] = [BANK_STATEMENTS_PROVIDER.name]
 
     def _collect_dependencies(self, task: TaskSubmission) -> list[TaskSubmission]:
         provider = next((p for p in REGISTERED_PROVIDERS if p.name == task.provider), None)

@@ -138,5 +138,5 @@ def test_deprioritisation_of_bank_statements_general(queue):
     queue.enqueue(bank_statements_task)
     queue.enqueue(id_verification_task)
 
-    assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
+    assert queue.dequeue().provider == ID_VERIFICATION_PROVIDER.name
     assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
