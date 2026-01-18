@@ -86,7 +86,6 @@ class Queue:
     @staticmethod
     def _complexity_weighting_for_task(task):
         metadata = task.metadata
-        print(f"{metadata=}")
         return metadata.get("complexity_weighting", 1)
 
     @staticmethod
@@ -134,6 +133,7 @@ class Queue:
             user_lowest_priorities[user_id] = min(
                 [self._priority_for_task(t) for t in user_tasks]
             )
+            print(f"{user_lowest_priorities[user_id]=}")
             priority_timestamps[user_id] = earliest_timestamp
             task_count[user_id] = len(user_tasks)
 
@@ -158,6 +158,9 @@ class Queue:
                 metadata["group_earliest_timestamp"] = current_earliest
                 metadata["priority"] = priority_level
 
+                if task.provider in self._deprioritised_providers:
+                    metadata["priority"] = user_lowest_priorities[task.user_id]
+
             if task.provider in self._deprioritised_providers:
                 metadata["complexity_weighting"] = 2
 
@@ -169,8 +172,6 @@ class Queue:
                 self._timestamp_for_task(i),
             )
         )
-
-        print(f"{queued_tasks=}")
 
         task = queued_tasks[0]
         del self._queue[(task.user_id, task.provider)]
@@ -274,4 +275,5 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
