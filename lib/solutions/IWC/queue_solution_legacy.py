@@ -106,16 +106,18 @@ class Queue:
         if self.size == 0:
             return None
 
-        user_ids = {task.user_id for task in list(self._queue.values())}
+        queued_tasks = list(self._queue.values())
+
+        user_ids = {task.user_id for task in queued_tasks}
         task_count = {}
         priority_timestamps = {}
         for user_id in user_ids:
-            user_tasks = [t for t in list(self._queue.values()) if t.user_id == user_id]
+            user_tasks = [t for t in queued_tasks if t.user_id == user_id]
             earliest_timestamp = sorted(user_tasks, key=lambda t: t.timestamp)[0].timestamp
             priority_timestamps[user_id] = earliest_timestamp
             task_count[user_id] = len(user_tasks)
 
-        for task in list(self._queue.values()):
+        for task in queued_tasks:
             metadata = task.metadata
             current_earliest = metadata.get("group_earliest_timestamp", MAX_TIMESTAMP)
             raw_priority = metadata.get("priority")
@@ -135,8 +137,7 @@ class Queue:
                 metadata["group_earliest_timestamp"] = current_earliest
                 metadata["priority"] = priority_level
 
-        queued_tasks = self._queue.values()
-        list(self._queue.values()).sort(
+        queued_tasks.sort(
             key=lambda i: (
                 self._priority_for_task(i),
                 self._earliest_group_timestamp_for_task(i),
@@ -144,7 +145,7 @@ class Queue:
             )
         )
 
-        task = self._queue.pop(0)
+        task = queued_tasks.pop(0)
         return TaskDispatch(
             provider=task.provider,
             user_id=task.user_id,
@@ -152,14 +153,14 @@ class Queue:
 
     @property
     def size(self):
-        return len(self._queue)
+        return len(self._queue.values())
 
     @property
     def age(self):
         return 0
 
     def purge(self):
-        self._queue.clear()
+        self._queue = {}
         return True
 
 """
@@ -245,6 +246,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
