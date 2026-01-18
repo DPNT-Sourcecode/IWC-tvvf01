@@ -177,10 +177,10 @@ class Queue:
                 metadata["group_earliest_timestamp"] = current_earliest
                 metadata["priority"] = priority_level
 
-                if self._should_deprioritise_task(task):
+                if self._should_deprioritise_task(task) and not self._should_reprioritise_deprioritised_task(task):
                     metadata["priority"] = user_lowest_priorities[task.user_id]
 
-            if self._should_deprioritise_task(task):
+            if self._should_deprioritise_task(task) and not self._should_reprioritise_deprioritised_task(task):
                 metadata["complexity_weighting"] = 2
 
         queued_tasks.sort(
@@ -308,6 +308,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
