@@ -91,28 +91,6 @@ class Queue:
         return timestamp
 
     def enqueue(self, item: TaskSubmission) -> int:
-        for position, original_task in enumerate(self._queue[:]):
-            dependent_tasks = self._collect_dependencies(item)
-            existing_dependencies = []
-
-            if (original_task.provider in [t.provider for t in dependent_tasks] and original_task.user_id == item.user_id):
-                print(item, original_task)
-                if self._timestamp_for_task(item) <= self._timestamp_for_task(original_task):
-                    print(f"Deleting {original_task.provider}")
-                    del self._queue[position]
-                else:
-                    existing_dependencies.append(original_task.provider)
-
-
-            if (original_task.user_id == item.user_id and original_task.provider == item.provider):
-                if self._timestamp_for_task(item) < self._timestamp_for_task(original_task):
-                    print(f"{existing_dependencies=}")
-                    dependencies_to_add = [task for task in dependent_tasks if task.provider not in existing_dependencies]
-                    print(f"{dependencies_to_add=}")
-                    self._queue[position:position] = [*dependencies_to_add, item]
-                print(f"{self.size=}")
-                return self.size
-
         tasks = [*self._collect_dependencies(item), item]
 
         for task in tasks:
@@ -264,6 +242,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
