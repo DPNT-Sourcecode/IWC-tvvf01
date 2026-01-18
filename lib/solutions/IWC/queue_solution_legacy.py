@@ -113,10 +113,10 @@ class Queue:
                     task.timestamp = existing_match.timestamp
 
             if self._oldest_task_timestamp is None or task.timestamp < self._oldest_task_timestamp:
-                self._oldest_task_timestamp = task.timestamp
+                self._oldest_task_timestamp = self._timestamp_for_task(task)
             
             if self._newest_task_timestamp is None or task.timestamp > self._newest_task_timestamp:
-                self._newest_task_timestamp = task.timestamp
+                self._newest_task_timestamp = self.__timestamp_for_task(task)
 
             metadata = task.metadata
             metadata.setdefault("priority", Priority.NORMAL)
@@ -189,7 +189,7 @@ class Queue:
                 self._oldest_task_timestamp = None
                 self._newest_task_timestamp = None
             else:
-                timestamps = [t.timestamp for t in self._queue.values()]
+                timestamps = [self.__timestamp_for_task(t) for t in self._queue.values()]
                 self._oldest_task_timestamp = min(timestamps)
                 self._newest_task_timestamp = max(timestamps)
 
@@ -202,6 +202,7 @@ class Queue:
     def size(self):
         return len(self._queue.values())
 
+    @property
     def age(self):
         if self.size == 0:
             return 0
@@ -296,4 +297,5 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
