@@ -153,15 +153,16 @@ class Queue:
                 metadata["group_earliest_timestamp"] = current_earliest
                 metadata["priority"] = priority_level
 
+            print(f"{task.provider=}, {self._deprioritised_providers}")
             if task.provider in self._deprioritised_providers:
                 metadata["task_simplicity_weighting"] = -1
 
         queued_tasks.sort(
             key=lambda i: (
+                self._simplicity_weighting_for_task_for_task(i),
                 self._priority_for_task(i),
                 self._earliest_group_timestamp_for_task(i),
                 self._timestamp_for_task(i),
-                self._simplicity_weighting_for_task_for_task(i)
             )
         )
 
@@ -267,4 +268,5 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
