@@ -80,10 +80,10 @@ def test_dequeue_respects_rule_of_three(queue):
 
 def test_respects_timestamp_ordering(queue):
     credit_check_task = TaskSubmission(provider=CREDIT_CHECK_PROVIDER.name, user_id=123, timestamp=datetime1, metadata={ "priority": Priority.NORMAL })
-    bank_statements_task= TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=234, timestamp=datetime2, metadata={ "priority": Priority.NORMAL })
+    id_verification_task = TaskSubmission(provider=ID_VERIFICATION_PROVIDER.name, user_id=234, timestamp=datetime2, metadata={ "priority": Priority.NORMAL })
 
     queue.enqueue(credit_check_task)
-    queue.enqueue(bank_statements_task)
+    queue.enqueue(id_verification_task)
 
     assert queue.dequeue().user_id == 234
 
