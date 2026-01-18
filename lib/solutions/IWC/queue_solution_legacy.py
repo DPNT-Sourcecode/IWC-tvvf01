@@ -180,6 +180,7 @@ class Queue:
             if self._should_deprioritise_task(task):
                 metadata["complexity_weighting"] = 2
 
+        print([self._complexity_weighting_for_task(t) for t in queued_tasks])
         queued_tasks.sort(
             key=lambda i: (
                 self._priority_for_task(i),
@@ -305,6 +306,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
