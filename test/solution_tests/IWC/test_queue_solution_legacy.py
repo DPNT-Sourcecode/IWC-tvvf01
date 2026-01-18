@@ -116,6 +116,6 @@ def test_deduplication_with_dependencies(queue):
     assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
 
 
-@pytest.skipif(True)
+@pytest.mark.skipif(True, reason="not implemented yet")
 def test_deprioritisation_of_bank_statements(queue):
-    ....
+    print('h')
