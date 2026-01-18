@@ -86,6 +86,7 @@ class Queue:
     @staticmethod
     def _simplicity_weighting_for_task_for_task(task):
         metadata = task.metadata
+        print(f"{metadata=}")
         return metadata.get("simplicity_weighting", 1)
 
     @staticmethod
@@ -159,12 +160,14 @@ class Queue:
 
         queued_tasks.sort(
             key=lambda i: (
-                self._simplicity_weighting_for_task_for_task(i),
                 self._priority_for_task(i),
+                self._simplicity_weighting_for_task_for_task(i),
                 self._earliest_group_timestamp_for_task(i),
                 self._timestamp_for_task(i),
             )
         )
+
+        print(f"{queued_tasks=}")
 
         task = queued_tasks[0]
         del self._queue[(task.user_id, task.provider)]
@@ -268,5 +271,6 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
