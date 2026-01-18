@@ -154,3 +154,19 @@ def test_queue_age(queue):
 
     assert queue.age == 120
 
+
+def test_reprioritise_bank_statement_when_internal_age_five_mins_or_more(queue):
+    bank_statements_task = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:00:00", metadata={ "priority": Priority.HIGH })
+    id_verification_task = TaskSubmission(provider=ID_VERIFICATION_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:03:00", metadata={ "priority": Priority.NORMAL })
+
+    queue.enqueue(bank_statements_task)
+    queue.enqueue(id_verification_task)
+
+    # Simulate 5 minutes passing by adjusting the internal timestamps
+    queue._oldest_task_timestamp = datetime.strptime("2025-10-20 11:55:00", "%Y-%m-%d %H:%M:%S")
+
+    assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
+    assert queue.dequeue().provider == ID_VERIFICATION_PROVIDER.name
+
+
+
