@@ -167,19 +167,23 @@ def test_reprioritise_bank_statement_when_internal_age_five_mins_or_more(queue):
 
 
 def test_reprioritise_bank_statement_when_internal_age_five_mins_or_more_multiuser(queue):
-    companies_house_u2 = TaskSubmission(provider=COMPANIES_HOUSE_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:00:00", metadata={ "priority": Priority.NORMAL })
-    bank_statements_task_u1 = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:00:00", metadata={ "priority": Priority.NORMAL })
-    id_verif_task_u2 = TaskSubmission(provider=ID_VERIFICATION_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:07:00", metadata={ "priority": Priority.NORMAL })
-    bank_statements_u2 = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:07:00", metadata={ "priority": Priority.NORMAL })
-    companies_house_u1 = TaskSubmission(provider=COMPANIES_HOUSE_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:07:00", metadata={ "priority": Priority.NORMAL })
-    id_verification_u1 = TaskSubmission(provider=ID_VERIFICATION_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:07:00", metadata={ "priority": Priority.NORMAL })
+    companies_house_u2 = TaskSubmission(provider=COMPANIES_HOUSE_PROVIDER.name, user_id=234, timestamp="2025-10-20 12:00:00", metadata={ "priority": Priority.NORMAL })
+    bank_statements_task_u1 = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:01:00", metadata={ "priority": Priority.NORMAL })
+    id_verif_task_u2 = TaskSubmission(provider=ID_VERIFICATION_PROVIDER.name, user_id=234, timestamp="2025-10-20 12:02:00", metadata={ "priority": Priority.NORMAL })
+    bank_statements_u2 = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=234, timestamp="2025-10-20 12:07:00", metadata={ "priority": Priority.NORMAL })
+    companies_house_u1 = TaskSubmission(provider=COMPANIES_HOUSE_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:08:00", metadata={ "priority": Priority.NORMAL })
+    id_verification_u1 = TaskSubmission(provider=ID_VERIFICATION_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:09:00", metadata={ "priority": Priority.NORMAL })
 
-    queue.enqueue(id_verification_task)
-    queue.enqueue(bank_statements_task)
-    queue.enqueue(companies_house_task)
+    queue.enqueue(companies_house_u2)
+    queue.enqueue(bank_statements_task_u1)
+    queue.enqueue(id_verif_task_u2)
+    queue.enqueue(bank_statements_u2)
+    queue.enqueue(companies_house_u1)
+    queue.enqueue(id_verification_u1)
 
     assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
-    assert queue.dequeue().provider == ID_VERIFICATION_PROVIDER.name
+    assert queue.dequeue().provider == COMPANIES_HOUSE_PROVIDER.name
+
 
 
 
