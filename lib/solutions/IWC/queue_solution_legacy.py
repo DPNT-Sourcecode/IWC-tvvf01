@@ -50,7 +50,6 @@ REGISTERED_PROVIDERS: list[Provider] = [
 
 class Queue:
     def __init__(self):
-        # self._queue = []
         self._queue: Dict[Tuple[str, str], TaskSubmission] = {}
 
     def _collect_dependencies(self, task: TaskSubmission) -> list[TaskSubmission]:
@@ -145,7 +144,8 @@ class Queue:
             )
         )
 
-        task = queued_tasks.pop(0)
+        task = queued_tasks[0]
+        del self._queue[(task.user_id, task.provider)]
         return TaskDispatch(
             provider=task.provider,
             user_id=task.user_id,
@@ -246,6 +246,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
