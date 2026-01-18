@@ -92,12 +92,13 @@ class Queue:
 
     def enqueue(self, item: TaskSubmission) -> int:
         for position, original_task in enumerate(self._queue[:]):
-            if (original_task.provider in item.depends_on and self._timestamp_for_task(item) < self._timestamp_for_task(original_task)):
+            dependent_tasks = self._collect_dependencies(item)
+            if (original_task.provider in [t.provider for t in dependent_tasks] and self._timestamp_for_task(item) < self._timestamp_for_task(original_task)):
                 del self._queue[position]
 
             if (original_task.user_id == item.user_id and original_task.provider == item.provider):
                 if self._timestamp_for_task(item) < self._timestamp_for_task(original_task):
-                    self._queue[position:position] = [*self._collect_dependencies(item), item]
+                    self._queue[position:position] = [*dependent_tasks, item]
                 return self.size
 
         tasks = [*self._collect_dependencies(item), item]
@@ -251,4 +252,5 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
