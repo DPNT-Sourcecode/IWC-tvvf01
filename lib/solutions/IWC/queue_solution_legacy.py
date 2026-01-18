@@ -73,7 +73,9 @@ class Queue:
         return tasks
 
     def _should_deprioritise_task(self, task: TaskSubmission) -> bool:
-        return task.provider in self._deprioritised_providers
+        is_deprioritised_provider = task.provider in self._deprioritised_providers
+
+        return is_deprioritised_provider
 
     @staticmethod
     def _priority_for_task(task):
@@ -300,4 +302,5 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
