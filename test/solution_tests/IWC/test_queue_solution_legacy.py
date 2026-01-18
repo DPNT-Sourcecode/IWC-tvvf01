@@ -13,10 +13,6 @@ def queue():
     return Queue()
 
 
-def test_age(queue):
-    assert queue.age == 0
-
-
 def test_size_empty_queue(queue):
     assert queue.size == 0
 
@@ -140,3 +136,7 @@ def test_deprioritisation_of_bank_statements_general(queue):
 
     assert queue.dequeue().provider == ID_VERIFICATION_PROVIDER.name
     assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
+
+
+def test_queue_age(queue):
+    assert queue.age == 0
