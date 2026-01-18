@@ -91,11 +91,16 @@ class Queue:
         return timestamp
 
     def enqueue(self, item: TaskSubmission) -> int:
+        did_replace_dependency = False
+
         for position, original_task in enumerate(self._queue[:]):
             dependent_tasks = self._collect_dependencies(item)
-            if (original_task.provider in [t.provider for t in dependent_tasks] and self._timestamp_for_task(item) < self._timestamp_for_task(original_task)):
-                print(f"Deleting {original_task.provider}")
-                del self._queue[position]
+            if (original_task.provider in [t.provider for t in dependent_tasks] and original_task.user_id == item.user_id):
+                if self._timestamp_for_task(item) <= self._timestamp_for_task(original_task):
+                    print(f"Deleting {original_task.provider}")
+                    del self._queue[position]
+                else:
+
 
             if (original_task.user_id == item.user_id and original_task.provider == item.provider):
                 if self._timestamp_for_task(item) < self._timestamp_for_task(original_task):
@@ -254,6 +259,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
