@@ -183,6 +183,16 @@ class Queue:
 
         task = queued_tasks[0]
         del self._queue[(task.user_id, task.provider)]
+
+        if task.timestamp == self._oldest_task_timestamp:
+            if self.size == 0:
+                self._oldest_task_timestamp = None
+                self._newest_task_timestamp = None
+            else:
+                timestamps = [t.timestamp for t in self._queue.values()]
+                self._oldest_task_timestamp = min(timestamps)
+                self._newest_task_timestamp = max(timestamps)
+
         return TaskDispatch(
             provider=task.provider,
             user_id=task.user_id,
@@ -196,6 +206,8 @@ class Queue:
     def age(self):
         if self.size == 0:
             return 0
+        
+        return (self._newest_task_timestamp - self._oldest_task_timestamp).total_seconds()
 
 
     def purge(self):
@@ -285,8 +297,3 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
-
-
-
-
-
