@@ -72,6 +72,9 @@ class Queue:
             tasks.append(dependency_task)
         return tasks
 
+    def _should_deprioritise_task(self, task: TaskSubmission) -> bool:
+        return task.provider in self._deprioritised_providers
+
     @staticmethod
     def _priority_for_task(task):
         metadata = task.metadata
@@ -166,10 +169,10 @@ class Queue:
                 metadata["group_earliest_timestamp"] = current_earliest
                 metadata["priority"] = priority_level
 
-                if task.provider in self._deprioritised_providers:
+                if self._should_deprioritise_task(task):
                     metadata["priority"] = user_lowest_priorities[task.user_id]
 
-            if task.provider in self._deprioritised_providers:
+            if self._should_deprioritise_task(task):
                 metadata["complexity_weighting"] = 2
 
         queued_tasks.sort(
@@ -297,3 +300,4 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+

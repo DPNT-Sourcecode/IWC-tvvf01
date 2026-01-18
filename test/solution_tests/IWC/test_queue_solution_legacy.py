@@ -158,7 +158,7 @@ def test_queue_age(queue):
 def test_reprioritise_bank_statement_when_internal_age_five_mins_or_more(queue):
     id_verification_task = TaskSubmission(provider=ID_VERIFICATION_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:00:00", metadata={ "priority": Priority.NORMAL })
     bank_statements_task = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:01:00", metadata={ "priority": Priority.NORMAL })
-    companies_house_task = TaskSubmission(provider=ID_VERIFICATION_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:07:00", metadata={ "priority": Priority.NORMAL })
+    companies_house_task = TaskSubmission(provider=COMPANIES_HOUSE_PROVIDER.name, user_id=123, timestamp="2025-10-20 12:07:00", metadata={ "priority": Priority.NORMAL })
 
     queue.enqueue(id_verification_task)
     queue.enqueue(bank_statements_task)
@@ -166,6 +166,7 @@ def test_reprioritise_bank_statement_when_internal_age_five_mins_or_more(queue):
 
     assert queue.dequeue().provider == ID_VERIFICATION_PROVIDER.name
     assert queue.dequeue().provider == BANK_STATEMENTS_PROVIDER.name
+
 
 
 
