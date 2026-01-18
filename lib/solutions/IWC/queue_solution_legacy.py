@@ -96,6 +96,7 @@ class Queue:
             existing_dependencies = []
 
             if (original_task.provider in [t.provider for t in dependent_tasks] and original_task.user_id == item.user_id):
+                print(item, original_task)
                 if self._timestamp_for_task(item) <= self._timestamp_for_task(original_task):
                     print(f"Deleting {original_task.provider}")
                     del self._queue[position]
@@ -105,7 +106,9 @@ class Queue:
 
             if (original_task.user_id == item.user_id and original_task.provider == item.provider):
                 if self._timestamp_for_task(item) < self._timestamp_for_task(original_task):
-                    self._queue[position:position] = [*(task for task in dependent_tasks if task.provider not in existing_dependencies), item]
+                    print(existing_dependencies)
+                    dependencies_to_add = [task for task in dependent_tasks if task.provider not in existing_dependencies]
+                    self._queue[position:position] = [*dependencies_to_add, item]
                 print(self.size)
                 return self.size
 
@@ -260,3 +263,4 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
