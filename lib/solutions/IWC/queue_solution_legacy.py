@@ -189,6 +189,7 @@ class Queue:
                 self._earliest_group_timestamp_for_task(i),
                 self._complexity_weighting_for_task(i),
                 self._timestamp_for_task(i),
+                self._should_reprioritise_deprioritised_task(task) == False
             )
         )
 
@@ -308,6 +309,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
