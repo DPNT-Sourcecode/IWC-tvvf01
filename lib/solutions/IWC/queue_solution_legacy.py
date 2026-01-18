@@ -116,7 +116,7 @@ class Queue:
                 self._oldest_task_timestamp = self._timestamp_for_task(task)
             
             if self._newest_task_timestamp is None or task.timestamp > self._newest_task_timestamp:
-                self._newest_task_timestamp = self.__timestamp_for_task(task)
+                self._newest_task_timestamp = self._timestamp_for_task(task)
 
             metadata = task.metadata
             metadata.setdefault("priority", Priority.NORMAL)
@@ -189,7 +189,7 @@ class Queue:
                 self._oldest_task_timestamp = None
                 self._newest_task_timestamp = None
             else:
-                timestamps = [self.__timestamp_for_task(t) for t in self._queue.values()]
+                timestamps = [self._timestamp_for_task(t) for t in self._queue.values()]
                 self._oldest_task_timestamp = min(timestamps)
                 self._newest_task_timestamp = max(timestamps)
 
@@ -297,5 +297,6 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
