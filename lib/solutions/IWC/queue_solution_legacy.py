@@ -92,13 +92,20 @@ class Queue:
         return timestamp
 
     def enqueue(self, item: TaskSubmission) -> int:
+        task_key = (task.user_id, task.provider)
         tasks = [*self._collect_dependencies(item), item]
 
         for task in tasks:
+            existing_match = self._queue[task_key]
+
+            if existing_match:
+                if existing_match.timestamp < task.timestamp:
+                    task.timestamp = existing_match.timestamp
+
             metadata = task.metadata
             metadata.setdefault("priority", Priority.NORMAL)
             metadata.setdefault("group_earliest_timestamp", MAX_TIMESTAMP)
-            self._queue[(task.user_id, task.provider)] = task
+            self._queue[task_key] = task
         return self.size
 
     def dequeue(self):
@@ -246,6 +253,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
