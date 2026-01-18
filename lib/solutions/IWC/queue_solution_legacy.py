@@ -189,8 +189,6 @@ class Queue:
             )
         )
 
-        print(f"{queued_tasks[0]=}")
-
         task = queued_tasks[0]
         del self._queue[(task.user_id, task.provider)]
 
@@ -307,10 +305,3 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
-
-
-
-
-
-
-
