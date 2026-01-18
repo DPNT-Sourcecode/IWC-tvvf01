@@ -153,8 +153,6 @@ class Queue:
             )
         )
 
-        print(f"{queued_tasks=}")
-
         task = queued_tasks[0]
         del self._queue[(task.user_id, task.provider)]
         return TaskDispatch(
@@ -257,4 +255,5 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
