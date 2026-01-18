@@ -108,6 +108,7 @@ class Queue:
                 if self._timestamp_for_task(item) < self._timestamp_for_task(original_task):
                     print(existing_dependencies)
                     dependencies_to_add = [task for task in dependent_tasks if task.provider not in existing_dependencies]
+                    print([*dependencies_to_add, item])
                     self._queue[position:position] = [*dependencies_to_add, item]
                 print(self.size)
                 return self.size
@@ -263,4 +264,5 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
