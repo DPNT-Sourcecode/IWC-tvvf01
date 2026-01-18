@@ -112,10 +112,10 @@ class Queue:
                 if existing_match.timestamp < task.timestamp:
                     task.timestamp = existing_match.timestamp
 
-            if self._oldest_task_timestamp is None or task.timestamp < self._oldest_task_timestamp:
+            if self._oldest_task_timestamp is None or self._timestamp_for_task(task) < self._oldest_task_timestamp:
                 self._oldest_task_timestamp = self._timestamp_for_task(task)
             
-            if self._newest_task_timestamp is None or task.timestamp > self._newest_task_timestamp:
+            if self._newest_task_timestamp is None or self._timestamp_for_task(task) > self._newest_task_timestamp:
                 self._newest_task_timestamp = self._timestamp_for_task(task)
 
             metadata = task.metadata
@@ -297,6 +297,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
