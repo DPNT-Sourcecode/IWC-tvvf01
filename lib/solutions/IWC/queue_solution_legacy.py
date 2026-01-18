@@ -184,7 +184,7 @@ class Queue:
         task = queued_tasks[0]
         del self._queue[(task.user_id, task.provider)]
 
-        if self._timestamp_for_task(task) == self._oldest_task_timestamp:
+        if self._timestamp_for_task(task) == self._oldest_task_timestamp or self._timestamp_for_task(task) == self._newest_task_timestamp:
             if self.size == 0:
                 self._oldest_task_timestamp = None
                 self._newest_task_timestamp = None
@@ -297,6 +297,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
