@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import IntEnum
+from typing import Dict, Tuple, List
 
 # LEGACY CODE ASSET
 # RESOLVED on deploy
@@ -49,7 +50,8 @@ REGISTERED_PROVIDERS: list[Provider] = [
 
 class Queue:
     def __init__(self):
-        self._queue = []
+        # self._queue = []
+        self._queue: Dict[Tuple[str, str], TaskSubmission] = {}
 
     def _collect_dependencies(self, task: TaskSubmission) -> list[TaskSubmission]:
         provider = next((p for p in REGISTERED_PROVIDERS if p.name == task.provider), None)
@@ -97,23 +99,23 @@ class Queue:
             metadata = task.metadata
             metadata.setdefault("priority", Priority.NORMAL)
             metadata.setdefault("group_earliest_timestamp", MAX_TIMESTAMP)
-            self._queue.append(task)
+            self._queue[(task.user_id, task.provider)] = task
         return self.size
 
     def dequeue(self):
         if self.size == 0:
             return None
 
-        user_ids = {task.user_id for task in self._queue}
+        user_ids = {task.user_id for task in list(self._queue.values())}
         task_count = {}
         priority_timestamps = {}
         for user_id in user_ids:
-            user_tasks = [t for t in self._queue if t.user_id == user_id]
+            user_tasks = [t for t in list(self._queue.values()) if t.user_id == user_id]
             earliest_timestamp = sorted(user_tasks, key=lambda t: t.timestamp)[0].timestamp
             priority_timestamps[user_id] = earliest_timestamp
             task_count[user_id] = len(user_tasks)
 
-        for task in self._queue:
+        for task in list(self._queue.values()):
             metadata = task.metadata
             current_earliest = metadata.get("group_earliest_timestamp", MAX_TIMESTAMP)
             raw_priority = metadata.get("priority")
@@ -133,7 +135,8 @@ class Queue:
                 metadata["group_earliest_timestamp"] = current_earliest
                 metadata["priority"] = priority_level
 
-        self._queue.sort(
+        queued_tasks = self._queue.values()
+        list(self._queue.values()).sort(
             key=lambda i: (
                 self._priority_for_task(i),
                 self._earliest_group_timestamp_for_task(i),
@@ -242,6 +245,7 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
 
 
 
