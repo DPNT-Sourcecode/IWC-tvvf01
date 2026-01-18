@@ -139,13 +139,16 @@ def test_deprioritisation_of_bank_statements_general(queue):
 
 
 def test_queue_age(queue):
-    assert queue.age == 0
+    assert queue.age() == 0
 
     bank_statements_task = TaskSubmission(provider=BANK_STATEMENTS_PROVIDER.name, user_id=123, timestamp=datetime2, metadata={ "priority": Priority.HIGH })
     id_verification_task = TaskSubmission(provider=ID_VERIFICATION_PROVIDER.name, user_id=123, timestamp=datetime1, metadata={ "priority": Priority.NORMAL })
 
     queue.enqueue(bank_statements_task)
+    assert queue.age() == 0
+
     queue.enqueue(id_verification_task)
 
-    assert queue.age == 3600
+    assert queue.age() == 3600
+
 

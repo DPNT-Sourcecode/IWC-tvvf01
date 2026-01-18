@@ -202,7 +202,6 @@ class Queue:
     def size(self):
         return len(self._queue.values())
 
-    @property
     def age(self):
         if self.size == 0:
             return 0
@@ -297,3 +296,4 @@ async def queue_worker():
         logger.info(f"Finished task: {task}")
 ```
 """
+
